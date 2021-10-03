@@ -10,6 +10,7 @@ import path from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { AuthService } from './auth/auth.service';
 import { PaymentsModule } from './payments/payments.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -64,7 +65,8 @@ import { PaymentsModule } from './payments/payments.module';
     }),
     AuthModule,
     SharedModule,
-    PaymentsModule
+    PaymentsModule,
+    GroupModule
   ],
   controllers: [AppController],
   providers: [AppService],

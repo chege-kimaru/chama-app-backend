@@ -28,7 +28,7 @@ export class PhoneVerificationCode extends Model<PhoneVerificationCode> {
 
   @AllowNull(false)
   @Column({ allowNull: false })
-  code: string;
+  code: number;
 
   @AllowNull(false)
   @Column({ allowNull: false })

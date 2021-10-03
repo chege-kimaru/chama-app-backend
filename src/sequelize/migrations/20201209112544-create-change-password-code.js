@@ -20,7 +20,7 @@ module.exports = {
         },
       },
       code: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       expiry: {

@@ -42,9 +42,16 @@ export class AuthService {
     private jwtService: JwtService) {
   }
 
+  formatPhone(phone?: string) {
+    return this.africaStalkingService.attemptFormattingPhones([phone])[0];
+  }
+
   async register(registerDto: RegisterDto) {
     const transaction = await this.sequelize.transaction();
     try {
+      // format phone number
+      registerDto.phone = this.formatPhone(registerDto.phone);
+
       // check if this phone is already registered
       let user = await this.userModel.findOne({ where: { phone: registerDto.phone }, transaction });
       if (user) {
@@ -93,6 +100,9 @@ export class AuthService {
   async resendVerificationCode(resendVerifyPhoneDto: PhoneDto) {
     const transaction = await this.sequelize.transaction();
     try {
+      // format phone number
+      resendVerifyPhoneDto.phone = this.formatPhone(resendVerifyPhoneDto.phone);
+
       // check if this phone is already registered
       const user = await this.userModel.findOne({ where: { phone: resendVerifyPhoneDto.phone }, transaction });
       if (!user) {
@@ -142,7 +152,11 @@ export class AuthService {
   }
 
   async verifyPhone(verifyPhoneDto: PhoneCodeDto) {
+    console.log(verifyPhoneDto);
     try {
+      // format phone number
+      verifyPhoneDto.phone = this.formatPhone(verifyPhoneDto.phone);
+
       let user = await this.userModel.findOne({
         where: { phone: verifyPhoneDto.phone },
         include: [{
@@ -174,6 +188,9 @@ export class AuthService {
   async requestChangePassword(phoneDto: PhoneDto) {
     const transaction = await this.sequelize.transaction();
     try {
+      // format phone number
+      phoneDto.phone = this.formatPhone(phoneDto.phone);
+
       // check if this phone is already registered
       const user = await this.userModel.findOne({ where: { phone: phoneDto.phone }, transaction });
       if (!user) {
@@ -224,6 +241,9 @@ export class AuthService {
 
   async changePassword(resetPassDto: ResetPassDto) {
     try {
+      // format phone number
+      resetPassDto.phone = this.formatPhone(resetPassDto.phone);
+
       let user = await this.userModel.findOne({
         where: { phone: resetPassDto.phone },
         include: [{
@@ -272,6 +292,9 @@ export class AuthService {
   }
 
   async validateUser(phone: string, pass: string): Promise<any> {
+    // format phone number
+    phone = this.formatPhone(phone);
+
     const user = await this.userModel.findOne({ where: { phone } });
     if (user) {
       try {
@@ -334,7 +357,6 @@ export class AuthService {
   }
 
   getVerifiedUsers(filter?: UserFilterDto) {
-    Logger.verbose(filter);
     const options = defaultFilterOptions(filter);
     options.attributes = { exclude: ['password'] };
     // options.where['phoneVerified'] = true;

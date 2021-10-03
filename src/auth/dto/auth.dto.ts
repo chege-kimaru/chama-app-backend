@@ -5,7 +5,6 @@ export class AuthDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    @Matches(/\+[0-9]*/)
     phone: string;
 
     @ApiProperty({ example: '123456' })

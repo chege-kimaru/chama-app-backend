@@ -27,7 +27,7 @@ export class ChangePasswordCode extends Model<ChangePasswordCode> {
 
   @AllowNull(false)
   @Column({ allowNull: false })
-  code: string;
+  code: number;
 
   @AllowNull(false)
   @Column({ allowNull: false })
