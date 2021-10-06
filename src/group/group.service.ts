@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { User } from 'src/auth/models/user.model';
 import { AfricasTalkingService } from 'src/shared/africas-talking.service';
 import { CreateGroupDto } from './dto/create-group.dto';
@@ -12,10 +13,12 @@ export class GroupService {
     constructor(
         @InjectModel(Group) private groupModel: typeof Group,
         @InjectModel(GroupMember) private groupMemberModel: typeof GroupMember,
-        private africasTalkingService: AfricasTalkingService
+        private africasTalkingService: AfricasTalkingService,
+        private sequelize: Sequelize,
     ) { }
 
     async createGroup(dto: CreateGroupDto) {
+        const transaction = await this.sequelize.transaction();
         try {
             // get last group
             const group = await this.groupModel.findOne({ order: [['createdAt', 'DESC']] });
@@ -24,8 +27,16 @@ export class GroupService {
             } else {
                 dto.code = 1001
             }
-            return this.groupModel.create(dto);
+
+            const newGroup = await this.groupModel.create(dto, { transaction });
+
+            // add the admin as a group user
+            await this.groupMemberModel.create({ userId: dto.adminId, groupId: newGroup.id, verified: true }, { transaction });
+
+            await transaction.commit();
+            return newGroup;
         } catch (e) {
+            await transaction.rollback();
             throw e;
         }
     }
@@ -72,7 +83,7 @@ export class GroupService {
     getGroupMembers(groupId: string, verified = true) {
         return this.groupMemberModel.findAll({
             where: { groupId, verified }, include:
-                [{ model: User, attributes: { exclude: ['password'] }, as: 'admin' }]
+                [{ model: User, attributes: { exclude: ['password'] } }]
         });
     }
 
@@ -92,6 +103,10 @@ export class GroupService {
             });
             if (!member) {
                 throw new ForbiddenException('This person has not requested to join your group yet.');
+            }
+
+            if (member.verified) {
+                throw new ForbiddenException('This member has already been verified');
             }
 
             if (dto.verified) {

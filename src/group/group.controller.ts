@@ -6,6 +6,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { VerifyMemberDto } from './dto/verify-member.dto';
 import { GroupService } from './group.service';
 import { GroupAdminGuard } from './guards/group-admin.guard';
+import { GroupMember } from './models/group-member.model';
 import { Group } from './models/group.model';
 
 @ApiTags('Group')
@@ -37,13 +38,13 @@ export class GroupController {
     @ApiResponse({ status: 200, type: Group, isArray: true })
     @ApiQuery({ name: 'code', required: false, type: Number })
     @Get()
-    async getGroups(@Req() req: any, @Query() code: number) {
+    async getGroups(@Req() req: any, @Query('code') code: number) {
         return this.groupService.getGroups(code);
     }
 
     @ApiBearerAuth()
     @ApiBody({ type: CreateGroupDto })
-    @ApiResponse({ status: 200, type: Group, isArray: true })
+    @ApiResponse({ status: 200, type: GroupMember, isArray: true })
     @ApiQuery({ name: 'code', required: false, type: Number })
     @Get('user')
     async getUserGroups(@Req() req: any) {
