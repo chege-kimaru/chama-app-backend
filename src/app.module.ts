@@ -11,6 +11,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { AuthService } from './auth/auth.service';
 import { PaymentsModule } from './payments/payments.module';
 import { GroupModule } from './group/group.module';
+import { SavingModule } from './saving/saving.module';
 
 @Module({
   imports: [
@@ -66,7 +67,8 @@ import { GroupModule } from './group/group.module';
     AuthModule,
     SharedModule,
     PaymentsModule,
-    GroupModule
+    GroupModule,
+    SavingModule
   ],
   controllers: [AppController],
   providers: [AppService],

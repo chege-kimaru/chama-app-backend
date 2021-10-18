@@ -8,6 +8,7 @@ import {
   PrimaryKey,
   Table, UpdatedAt,
 } from 'sequelize-typescript';
+import { User } from 'src/auth/models/user.model';
 import { MpesaB2CPayment } from './mpesa-b2c-payment.model';
 import { MpesaC2BPayment } from './mpesa-c2b-payment.model';
 
@@ -18,6 +19,13 @@ export class Payment extends Model<Payment> {
   @IsUUID(4)
   @Column
   id: string;
+
+  @ForeignKey(() => User)
+  @Column({ field: 'user_id' })
+  userId: string;
+
+  @BelongsTo(() => User)
+  user: User;
 
   @Default('KES')
   @NotNull
@@ -42,7 +50,6 @@ export class Payment extends Model<Payment> {
   @UpdatedAt
   @Column({ allowNull: false, field: 'updated_at' })
   updatedAt: Date;
-
 
   @HasOne(() => MpesaB2CPayment)
   mpesaB2CPayment: MpesaB2CPayment;
