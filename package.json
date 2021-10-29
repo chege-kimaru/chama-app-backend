@@ -55,6 +55,7 @@
     "handlebars": "^4.7.6",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.32",
+    "morgan": "^1.10.0",
     "mpesa-api": "^2.3.3",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",

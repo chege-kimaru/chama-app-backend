@@ -43,9 +43,7 @@ export class GroupController {
     }
 
     @ApiBearerAuth()
-    @ApiBody({ type: CreateGroupDto })
     @ApiResponse({ status: 200, type: GroupMember, isArray: true })
-    @ApiQuery({ name: 'code', required: false, type: Number })
     @Get('user')
     async getUserGroups(@Req() req: any) {
         return this.groupService.getUserGroups(req.user.id);
@@ -59,7 +57,6 @@ export class GroupController {
     }
 
     @ApiBearerAuth()
-    @ApiBody({ type: CreateGroupDto })
     @ApiParam({ name: 'groupId' })
     @UseGuards(GroupAdminGuard)
     @Delete(':groupId')

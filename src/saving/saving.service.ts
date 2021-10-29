@@ -43,8 +43,30 @@ export class SavingService {
         return this.savingModel.findAll({ where: { groupId, userId }, order: [['createdAt', 'DESC']] });
     }
 
+    async getTotalUserGroupSavings(groupId: string, userId: string) {
+        const totalSavings: any[] = await this.savingModel.findAll({
+            attributes: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'total']],
+            where: { groupId, userId },
+            group: [Sequelize.col('group_id'), Sequelize.col('user_id')]
+        });
+        return totalSavings[0];
+    }
+
     getAllGroupSavings(groupId: string) {
-        return this.savingModel.findAll({ where: { groupId }, order: [['createdAt', 'DESC']] });
+        return this.savingModel.findAll({
+            where: { groupId },
+            include: [{ model: User, attributes: { exclude: ['password'] } }],
+            order: [['createdAt', 'DESC']]
+        });
+    }
+
+    async getTotalGroupSavings(groupId: string) {
+        const totalSavings: any[] = await this.savingModel.findAll({
+            attributes: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'total']],
+            where: { groupId },
+            group: [Sequelize.col('group_id')]
+        });
+        return totalSavings[0];
     }
 
     async initiateMpesaPayment(group: Group, user: User, amount: number): Promise<boolean> {
@@ -66,7 +88,7 @@ export class SavingService {
             );
             Logger.verbose(mpesaRes);
 
-            if (+mpesaRes.ResponseCode === 0) {
+            if (+ mpesaRes.ResponseCode === 0) {
                 // create mpesa payment
                 await this.mpesaC2BPaymentModel.create({
                     userId: user.id,

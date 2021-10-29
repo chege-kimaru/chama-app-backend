@@ -33,20 +33,28 @@ export class MpesaService {
         );
     }
 
-    lipaNaMpesa(phone: string, amount: number, description: string, callbackUrl: string) {
-        phone = this.formatPhone(phone);
-        return this.mpesaPaybill.lipaNaMpesaOnline({
-            BusinessShortCode: this.configService.get<number>('MPESA_PAYBILL_SHORT_CODE'), // Lipa Na Mpesa Online Shortcode on test credentials page
-            Amount: amount /* 1000 is an example amount */,
-            PartyA: phone, // use your real phone number
-            PartyB: this.configService.get('MPESA_PAYBILL_SHORT_CODE'), // LiAccount Referencepa Na Mpesa Online Shortcode on test credentials page
-            PhoneNumber: phone, // use your real phone number
-            CallBackURL: `${this.configService.get('SERVER_URL')}/${callbackUrl}`, // this is where the api sends a callback. It must a hosted endpoint with public access.
-            AccountReference: "111110", // This is what the customer would have put as account number if they used normal mpesa
-            passKey: this.configService.get<number>('MPESA_PAYBILL_PASS_KEY'), // Lipa na mpesa passkey in test credentials page
-            TransactionType: "CustomerPayBillOnline" /* OPTIONAL */,
-            TransactionDesc: description /* OPTIONAL */,
-        });
+    async lipaNaMpesa(phone: string, amount: number, description: string, callbackUrl: string) {
+        let res;
+        try {
+            phone = this.formatPhone(phone);
+            res = await this.mpesaPaybill.lipaNaMpesaOnline({
+                BusinessShortCode: this.configService.get<number>('MPESA_PAYBILL_SHORT_CODE'), // Lipa Na Mpesa Online Shortcode on test credentials page
+                Amount: amount /* 1000 is an example amount */,
+                PartyA: phone, // use your real phone number
+                PartyB: this.configService.get('MPESA_PAYBILL_SHORT_CODE'), // LiAccount Referencepa Na Mpesa Online Shortcode on test credentials page
+                PhoneNumber: phone, // use your real phone number
+                CallBackURL: `${this.configService.get('SERVER_URL')}/${callbackUrl}`, // this is where the api sends a callback. It must a hosted endpoint with public access.
+                AccountReference: "111110", // This is what the customer would have put as account number if they used normal mpesa
+                passKey: this.configService.get<number>('MPESA_PAYBILL_PASS_KEY'), // Lipa na mpesa passkey in test credentials page
+                TransactionType: "CustomerPayBillOnline" /* OPTIONAL */,
+                TransactionDesc: description /* OPTIONAL */,
+            });
+            console.log(res);
+            return res;
+        } catch (e) {
+            console.log(res);
+            throw e;
+        }
     };
 
     payB2c(phone: string, amount: number, resultUrl: string, queueTimeOutUrl: string) {
