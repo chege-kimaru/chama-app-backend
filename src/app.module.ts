@@ -12,6 +12,7 @@ import { AuthService } from './auth/auth.service';
 import { PaymentsModule } from './payments/payments.module';
 import { GroupModule } from './group/group.module';
 import { SavingModule } from './saving/saving.module';
+import { LoanModule } from './loan/loan.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { SavingModule } from './saving/saving.module';
     SharedModule,
     PaymentsModule,
     GroupModule,
-    SavingModule
+    SavingModule,
+    LoanModule
   ],
   controllers: [AppController],
   providers: [AppService],
